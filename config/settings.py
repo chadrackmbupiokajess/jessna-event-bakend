@@ -105,7 +105,14 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Le front Next.js tourne sur une autre adresse : on l'autorise explicitement.
-CORS_ALLOWED_ORIGINS = env_list("CORS_ALLOWED_ORIGINS", FRONTEND_URL or "https://jessna-event.vercel.app")
+CORS_ALLOWED_ORIGINS = env_list(
+    "CORS_ALLOWED_ORIGINS",
+    ",".join(filter(None, (
+        FRONTEND_URL,
+        "https://jessna-event.vercel.app",
+        "https://jessnaevent.pythonanywhere.com",
+    ))),
+)
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 REST_FRAMEWORK = {
