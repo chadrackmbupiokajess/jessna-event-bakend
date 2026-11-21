@@ -1,16 +1,25 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.http import HttpResponseRedirect
 from django.urls import include, path
 from django.views.generic import RedirectView
 
 admin.site.site_header = "Jessna Event"
 admin.site.site_title = "Jessna Event"
 
+
+def rediriger_invitation(request, code):
+    """Les invitations sont affichées par Next.js, pas par Django."""
+    return HttpResponseRedirect(f"{settings.FRONTEND_URL.rstrip('/')}/i/{code}")
+
+
 urlpatterns = [
     path("django-admin/", admin.site.urls),
     # Alias pratique : /admin/ redirige vers l'interface Django officielle.
     path("admin/", RedirectView.as_view(url="/django-admin/", permanent=False)),
+    path("i/<str:code>/", rediriger_invitation),
+    path("i/<str:code>", rediriger_invitation),
     path("api/", include("invitations.urls")),
 ]
 

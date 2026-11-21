@@ -32,7 +32,10 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Adresse publique du site, pour les QR codes (FRONTEND_URL/i/<code>).
 # Vide = automatique, d'après l'adresse utilisée pour ouvrir le site.
-FRONTEND_URL = os.environ.get("FRONTEND_URL", "").rstrip("/")
+FRONTEND_URL = (
+    os.environ.get("FRONTEND_URL")
+    or ("https://jessna-event.vercel.app" if not DEBUG else "")
+).rstrip("/")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
