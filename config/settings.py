@@ -19,7 +19,10 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-uniquement-a-changer")
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
 # En développement, Django accepte toutes les adresses : le site s'ouvre depuis
 # une autre machine du réseau (http://192.168.x.x:3000). En production, lister les domaines.
-ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "https://jessna-event.vercel.app,jessnaevent.pythonanywhere.com" if DEBUG else "localhost,127.0.0.1")
+ALLOWED_HOSTS = env_list(
+    "DJANGO_ALLOWED_HOSTS",
+    "*" if DEBUG else "jessnaevent.pythonanywhere.com,jessna-event.vercel.app,localhost,127.0.0.1",
+)
 
 # Next.js transmet /api et /media à Django en indiquant l'adresse d'origine
 # (X-Forwarded-Host / X-Forwarded-Proto) : les liens et les images construits
