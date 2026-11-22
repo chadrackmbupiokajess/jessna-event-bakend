@@ -63,6 +63,21 @@ class ParametresEcosystem(Horodatage):
 
     nom = models.CharField("nom", max_length=100, default="Jessna Event")
     slogan = models.CharField("slogan", max_length=180, blank=True)
+    presentation = models.TextField(
+        "présentation",
+        max_length=1200,
+        default="Jessna Event conçoit des expériences professionnelles pour vos événements : invitations à QR code, gestion des invités, contrôle des entrées et accompagnement sur mesure.",
+    )
+    mission = models.TextField(
+        "mission",
+        max_length=1200,
+        default="Simplifier l'organisation des cérémonies, offrir une expérience élégante à chaque invité et garantir une réception fluide, sécurisée et mémorable.",
+    )
+    services = models.TextField(
+        "services",
+        max_length=1200,
+        default="Invitations personnalisées\nCréation d'affiches professionnelles\nCréation de sites web\nPlan des tables\nContrôle d'entrée par QR code\nPrésence en temps réel\nDiffusion WhatsApp\nAccompagnement événementiel",
+    )
     telephone = models.CharField("téléphone", max_length=30, blank=True)
     whatsapp = models.CharField("WhatsApp", max_length=30, blank=True)
     email = models.EmailField("e-mail", blank=True)

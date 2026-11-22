@@ -53,7 +53,10 @@ def verifier_mot_de_passe(mot_de_passe: str, utilisateur) -> None:
 class ParametresEcosystemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParametresEcosystem
-        fields = ["nom", "slogan", "telephone", "whatsapp", "email", "adresse", "site_web"]
+        fields = [
+            "nom", "slogan", "presentation", "mission", "services",
+            "telephone", "whatsapp", "email", "adresse", "site_web",
+        ]
 
 
 # ---------------------------------------------------------------- affiche
