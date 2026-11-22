@@ -297,6 +297,25 @@ class InviteSerializer(serializers.ModelSerializer):
         return super().update(instance, vd)
 
 
+class TableSerializer(serializers.ModelSerializer):
+    places_attribuees = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Table
+        fields = ["id", "numero", "nom", "capacite", "places_attribuees"]
+
+    def get_places_attribuees(self, table):
+        return table.places_attribuees()
+
+    def validate_numero(self, numero):
+        numero = numero.strip()
+        if not numero:
+            raise serializers.ValidationError("Indique le nom ou le numéro de la table.")
+        if len(numero) > 20:
+            raise serializers.ValidationError("20 caractères maximum.")
+        return numero
+
+
 class InvitePubliqueSerializer(serializers.ModelSerializer):
     """Ce qu'un invité voit de sa propre invitation (rien sur sa table ni les autres invités)."""
 

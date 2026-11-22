@@ -25,6 +25,8 @@ urlpatterns = [
     path("mariages/<int:mariage_id>/", views.MariageDetailView.as_view()),
     path("mariages/<int:mariage_id>/affiche/", views.AfficheView.as_view()),
     path("mariages/<int:mariage_id>/affiche/image-origine/", views.AfficheImageOrigineView.as_view()),
+    path("mariages/<int:mariage_id>/tables/", views.TablesView.as_view()),
+    path("mariages/<int:mariage_id>/tables/<int:pk>/", views.TableDetailView.as_view()),
     path("mariages/<int:mariage_id>/invites/", views.InvitesView.as_view()),
     path("mariages/<int:mariage_id>/invites/<int:pk>/", views.InviteDetailView.as_view()),
     path("mariages/<int:mariage_id>/invites/<int:pk>/envoyee/", views.InviteEnvoyeeView.as_view()),

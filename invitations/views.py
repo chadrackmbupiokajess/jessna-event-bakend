@@ -18,11 +18,12 @@ from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
-from .models import Expertise, Invite, Mariage, ModeleAffiche, ParametresEcosystem, Scan, normaliser_code
+from .models import Expertise, Invite, Mariage, ModeleAffiche, ParametresEcosystem, Scan, Table, normaliser_code
 from .serializers import (
     AgentSerializer, ImageInvitationSerializer, InvitePubliqueSerializer, InviteSerializer, MariageSerializer,
     ModeleAfficheSerializer, MotDePasseSerializer, NouveauMariageSerializer, PhotoJointeSerializer,
     ExpertiseSerializer, ParametresEcosystemSerializer,
+    TableSerializer,
 )
 
 
@@ -206,6 +207,25 @@ class MariageDetailView(generics.RetrieveAPIView):
 
     def get_object(self):
         return mariage_pour(self.request, self.kwargs["mariage_id"])
+
+
+class TablesView(DansMonMariage, generics.ListCreateAPIView):
+    serializer_class = TableSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        return self.get_mariage().tables.all()
+
+    def perform_create(self, serializer):
+        serializer.save(mariage=self.get_mariage())
+
+
+class TableDetailView(DansMonMariage, generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = TableSerializer
+    http_method_names = ["get", "patch", "delete", "head", "options"]
+
+    def get_queryset(self):
+        return self.get_mariage().tables.all()
 
 
 class AfficheView(DansMonMariage, generics.RetrieveUpdateAPIView):
