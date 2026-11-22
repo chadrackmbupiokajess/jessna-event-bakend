@@ -16,6 +16,7 @@ urlpatterns = [
     path("auth/moi/", views.MoiView.as_view()),
     # Administrateur : tous les mariages, création du mariage + compte des mariés
     path("admin/mariages/", views.AdminMariagesView.as_view()),
+    path("admin/ecosysteme/", views.AdminEcosystemView.as_view()),
     path("admin/mariages/<int:mariage_id>/mot-de-passe/", views.AdminMotDePasseView.as_view()),
     # Espace d'un mariage (les mariés, ou l'administrateur)
     path("mariages/", views.MesMariagesView.as_view()),

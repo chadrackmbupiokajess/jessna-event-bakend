@@ -7,7 +7,7 @@ from django.utils.text import slugify
 from rest_framework import serializers
 
 from .images import optimiser_image
-from .models import PHOTOS_MAX, Agent, Invite, Mariage, ModeleAffiche, PhotoJointe, Table
+from .models import PHOTOS_MAX, Agent, Invite, Mariage, ModeleAffiche, ParametresEcosystem, PhotoJointe, Table
 
 User = get_user_model()
 # Les images sont converties et compressées à l'arrivée (images.py) :
@@ -48,6 +48,12 @@ def verifier_mot_de_passe(mot_de_passe: str, utilisateur) -> None:
         validate_password(mot_de_passe, user=utilisateur)
     except DjangoValidationError as e:
         raise serializers.ValidationError({"password": list(e.messages)})
+
+
+class ParametresEcosystemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ParametresEcosystem
+        fields = ["nom", "slogan", "telephone", "whatsapp", "email", "adresse", "site_web"]
 
 
 # ---------------------------------------------------------------- affiche
@@ -207,8 +213,8 @@ class InviteSerializer(serializers.ModelSerializer):
     code_affiche = serializers.CharField(read_only=True)
     url_qr = serializers.SerializerMethodField()
     image_invitation = serializers.SerializerMethodField()
-    table_numero = serializers.IntegerField(
-        required=False, allow_null=True, min_value=1, max_value=999, write_only=True
+    table_numero = serializers.CharField(
+        required=False, allow_null=True, allow_blank=False, max_length=20, write_only=True
     )
 
     class Meta:
@@ -254,6 +260,9 @@ class InviteSerializer(serializers.ModelSerializer):
 
     def _table(self, numero):
         if numero is None:
+            return None
+        numero = numero.strip()
+        if not numero:
             return None
         return Table.objects.get_or_create(mariage=self.context["mariage"], numero=numero)[0]
 

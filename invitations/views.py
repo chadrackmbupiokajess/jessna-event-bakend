@@ -18,10 +18,11 @@ from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
-from .models import Invite, Mariage, ModeleAffiche, Scan, normaliser_code
+from .models import Invite, Mariage, ModeleAffiche, ParametresEcosystem, Scan, normaliser_code
 from .serializers import (
     AgentSerializer, ImageInvitationSerializer, InvitePubliqueSerializer, InviteSerializer, MariageSerializer,
     ModeleAfficheSerializer, MotDePasseSerializer, NouveauMariageSerializer, PhotoJointeSerializer,
+    ParametresEcosystemSerializer,
 )
 
 
@@ -113,6 +114,21 @@ class AdminMariagesView(APIView):
         s.is_valid(raise_exception=True)
         mariage = s.save()
         return Response(MariageSerializer(mariage).data, status=status.HTTP_201_CREATED)
+
+
+class AdminEcosystemView(APIView):
+    """Page publicitaire globale affichée aux invités."""
+
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        return Response(ParametresEcosystemSerializer(ParametresEcosystem.charger()).data)
+
+    def put(self, request):
+        serializer = ParametresEcosystemSerializer(ParametresEcosystem.charger(), data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
 class AdminMotDePasseView(APIView):
@@ -356,9 +372,20 @@ class InvitationPubliqueView(APIView):
             Invite.objects.select_related("mariage"), code=normaliser_code(code)
         )
         affiche, _ = ModeleAffiche.objects.get_or_create(mariage=invite.mariage)
+        photos = [
+            {
+                "id": photo.id,
+                "image": request.build_absolute_uri(photo.image.url),
+                "legende": photo.legende,
+                "ordre": photo.ordre,
+            }
+            for photo in invite.mariage.photos.all()
+        ]
         return Response(
             {
                 "modele": ModeleAfficheSerializer(affiche, context={"request": request}).data,
                 "invite": InvitePubliqueSerializer(invite, context={"request": request}).data,
+                "photos": photos,
+                "ecosysteme": ParametresEcosystemSerializer(ParametresEcosystem.charger()).data,
             }
         )

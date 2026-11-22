@@ -58,6 +58,31 @@ class Horodatage(models.Model):
         abstract = True
 
 
+class ParametresEcosystem(Horodatage):
+    """Informations globales affichées sur la page publicitaire des invités."""
+
+    nom = models.CharField("nom", max_length=100, default="Jessna Event")
+    slogan = models.CharField("slogan", max_length=180, blank=True)
+    telephone = models.CharField("téléphone", max_length=30, blank=True)
+    whatsapp = models.CharField("WhatsApp", max_length=30, blank=True)
+    email = models.EmailField("e-mail", blank=True)
+    adresse = models.CharField("adresse", max_length=180, blank=True)
+    site_web = models.URLField("site web", max_length=250, blank=True)
+
+    class Meta:
+        verbose_name = "paramètre de l'écosystème"
+        verbose_name_plural = "paramètres de l'écosystème"
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def charger(cls):
+        objet, _ = cls.objects.get_or_create(pk=1)
+        return objet
+
+
 # ---------------------------------------------------------------------------
 # Mariage
 # ---------------------------------------------------------------------------
@@ -273,7 +298,7 @@ class PhotoJointe(Horodatage):
 # ---------------------------------------------------------------------------
 class Table(models.Model):
     mariage = models.ForeignKey(Mariage, on_delete=models.CASCADE, related_name="tables")
-    numero = models.PositiveSmallIntegerField("numéro")
+    numero = models.CharField("numéro", max_length=20)
     nom = models.CharField(max_length=60, blank=True, help_text="Ex. « Table des parents »")
     capacite = models.PositiveSmallIntegerField("capacité", default=10)
 
