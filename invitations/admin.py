@@ -6,7 +6,7 @@ L'admin des mariés (formulaire + aperçu de l'affiche) sera dans Next.js, page 
 from django import forms
 from django.contrib import admin
 
-from .models import Agent, Invite, Mariage, ModeleAffiche, PhotoJointe, Scan, Table
+from .models import Agent, Expertise, Invite, Mariage, ModeleAffiche, ParametresEcosystem, PhotoJointe, Scan, Table
 
 
 class ModeleAfficheInline(admin.StackedInline):
@@ -53,6 +53,22 @@ class MariageAdmin(admin.ModelAdmin):
     def resume(self, obj):
         s = obj.stats()
         return f"{s['arrives']} / {s['places']}"
+
+
+@admin.register(ParametresEcosystem)
+class ParametresEcosystemAdmin(admin.ModelAdmin):
+    list_display = ["nom", "telephone", "whatsapp", "maj_le"]
+
+    def has_add_permission(self, request):
+        return not ParametresEcosystem.objects.exists()
+
+
+@admin.register(Expertise)
+class ExpertiseAdmin(admin.ModelAdmin):
+    list_display = ["titre", "ordre", "maj_le"]
+    list_editable = ["ordre"]
+    search_fields = ["titre", "description"]
+    ordering = ["ordre", "id"]
 
 
 @admin.register(Invite)

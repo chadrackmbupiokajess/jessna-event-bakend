@@ -98,6 +98,32 @@ class ParametresEcosystem(Horodatage):
         return objet
 
 
+def chemin_expertise(instance: "Expertise", nom_fichier: str) -> str:
+    return f"ecosysteme/expertises/{nom_fichier}"
+
+
+class Expertise(Horodatage):
+    """Une expertise présentée sur la page publique de l'écosystème."""
+
+    parametres = models.ForeignKey(
+        ParametresEcosystem,
+        on_delete=models.CASCADE,
+        related_name="expertises",
+    )
+    titre = models.CharField("titre", max_length=100)
+    description = models.TextField("description", max_length=600, blank=True)
+    image = models.ImageField("image", upload_to=chemin_expertise, blank=True)
+    ordre = models.PositiveSmallIntegerField("ordre", default=0)
+
+    class Meta:
+        ordering = ["ordre", "id"]
+        verbose_name = "expertise"
+        verbose_name_plural = "expertises"
+
+    def __str__(self) -> str:
+        return self.titre
+
+
 # ---------------------------------------------------------------------------
 # Mariage
 # ---------------------------------------------------------------------------

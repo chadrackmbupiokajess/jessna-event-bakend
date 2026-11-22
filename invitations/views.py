@@ -18,11 +18,11 @@ from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
-from .models import Invite, Mariage, ModeleAffiche, ParametresEcosystem, Scan, normaliser_code
+from .models import Expertise, Invite, Mariage, ModeleAffiche, ParametresEcosystem, Scan, normaliser_code
 from .serializers import (
     AgentSerializer, ImageInvitationSerializer, InvitePubliqueSerializer, InviteSerializer, MariageSerializer,
     ModeleAfficheSerializer, MotDePasseSerializer, NouveauMariageSerializer, PhotoJointeSerializer,
-    ParametresEcosystemSerializer,
+    ExpertiseSerializer, ParametresEcosystemSerializer,
 )
 
 
@@ -129,6 +129,46 @@ class AdminEcosystemView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+
+class AdminExpertisesView(APIView):
+    permission_classes = [IsAdminUser]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
+
+    def get(self, request):
+        expertises = ParametresEcosystem.charger().expertises.all()
+        return Response(ExpertiseSerializer(expertises, many=True, context={"request": request}).data)
+
+    def post(self, request):
+        parametres = ParametresEcosystem.charger()
+        serializer = ExpertiseSerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save(parametres=parametres)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class AdminExpertiseDetailView(APIView):
+    permission_classes = [IsAdminUser]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
+
+    def patch(self, request, expertise_id):
+        expertise = get_object_or_404(Expertise, pk=expertise_id)
+        serializer = ExpertiseSerializer(
+            expertise,
+            data=request.data,
+            partial=True,
+            context={"request": request},
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, expertise_id):
+        expertise = get_object_or_404(Expertise, pk=expertise_id)
+        if expertise.image:
+            expertise.image.delete(save=False)
+        expertise.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AdminMotDePasseView(APIView):

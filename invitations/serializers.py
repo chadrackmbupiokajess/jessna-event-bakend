@@ -7,7 +7,7 @@ from django.utils.text import slugify
 from rest_framework import serializers
 
 from .images import optimiser_image
-from .models import PHOTOS_MAX, Agent, Invite, Mariage, ModeleAffiche, ParametresEcosystem, PhotoJointe, Table
+from .models import PHOTOS_MAX, Agent, Expertise, Invite, Mariage, ModeleAffiche, ParametresEcosystem, PhotoJointe, Table
 
 User = get_user_model()
 # Les images sont converties et compressées à l'arrivée (images.py) :
@@ -50,12 +50,30 @@ def verifier_mot_de_passe(mot_de_passe: str, utilisateur) -> None:
         raise serializers.ValidationError({"password": list(e.messages)})
 
 
+class ExpertiseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Expertise
+        fields = ["id", "titre", "description", "image", "ordre"]
+        extra_kwargs = {
+            "image": {"required": False, "allow_null": True},
+            "description": {"required": False, "allow_blank": True},
+        }
+
+    def validate_image(self, image):
+        if image and image.size > TAILLE_MAX_IMAGE:
+            raise serializers.ValidationError("L'image dépasse 25 Mo.")
+        return optimiser_image(image) if image else image
+
+
 class ParametresEcosystemSerializer(serializers.ModelSerializer):
+    expertises = ExpertiseSerializer(many=True, read_only=True)
+
     class Meta:
         model = ParametresEcosystem
         fields = [
             "nom", "slogan", "presentation", "mission", "services",
             "telephone", "whatsapp", "email", "adresse", "site_web",
+            "expertises",
         ]
 
 
